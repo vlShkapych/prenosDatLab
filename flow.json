@@ -1,0 +1,659 @@
+{
+        "id": "832ff2e1581d2204",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "fd720b43d7de9f6f",
+        "type": "aedes broker",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "mqtt_port": "2000",
+        "mqtt_ws_bind": "port",
+        "mqtt_ws_port": "",
+        "mqtt_ws_path": "",
+        "cert": "",
+        "key": "",
+        "certname": "",
+        "keyname": "",
+        "dburl": "mongodb://localhost:27017/rfid_db",
+        "usetls": false,
+        "x": 550,
+        "y": 280,
+        "wires": [
+            [
+                "8e3714ddc562d620"
+            ],
+            [
+                "e74d2e748fa02f74"
+            ]
+        ]
+    },
+    {
+        "id": "8e3714ddc562d620",
+        "type": "debug",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "e74d2e748fa02f74",
+        "type": "debug",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 830,
+        "y": 340,
+        "wires": []
+    },
+    {
+        "id": "2ad253f62b2dd602",
+        "type": "mongodb in",
+        "z": "832ff2e1581d2204",
+        "mongodb": "6a8a9e8cbd23bc2c",
+        "name": "",
+        "collection": "records",
+        "operation": "find",
+        "x": 680,
+        "y": 640,
+        "wires": [
+            [
+                "5efb663239a669cb"
+            ]
+        ]
+    },
+    {
+        "id": "f6eea5da13d951e8",
+        "type": "ui_toast",
+        "z": "832ff2e1581d2204",
+        "position": "bottom right",
+        "displayTime": "3",
+        "highlight": "",
+        "sendall": true,
+        "outputs": 0,
+        "ok": "OK",
+        "cancel": "",
+        "raw": true,
+        "className": "",
+        "topic": "In",
+        "name": "In",
+        "x": 1370,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "1d317b386473a42c",
+        "type": "mqtt in",
+        "z": "832ff2e1581d2204",
+        "name": "RFID Reader",
+        "topic": "rfreader/1",
+        "qos": "2",
+        "datatype": "auto",
+        "broker": "45d875f5f3eeb95a",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 410,
+        "y": 520,
+        "wires": [
+            [
+                "44099330f466374c",
+                "2ad253f62b2dd602",
+                "53415da0aa51e16b"
+            ]
+        ]
+    },
+    {
+        "id": "b9130c8f8191985d",
+        "type": "mongodb in",
+        "z": "832ff2e1581d2204",
+        "mongodb": "6a8a9e8cbd23bc2c",
+        "name": "",
+        "collection": "cards",
+        "operation": "find",
+        "x": 770,
+        "y": 520,
+        "wires": [
+            [
+                "20bc738e7f30c841"
+            ]
+        ]
+    },
+    {
+        "id": "44099330f466374c",
+        "type": "function",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "func": "msg.payload = {\"rfid\": msg.payload};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 580,
+        "y": 520,
+        "wires": [
+            [
+                "b9130c8f8191985d"
+            ]
+        ]
+    },
+    {
+        "id": "27be98817d83aa34",
+        "type": "mongodb out",
+        "z": "832ff2e1581d2204",
+        "mongodb": "6a8a9e8cbd23bc2c",
+        "name": "",
+        "collection": "records",
+        "payonly": false,
+        "upsert": true,
+        "multi": true,
+        "operation": "store",
+        "x": 1440,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "6ff66543db35def0",
+        "type": "function",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "func": "msg.payload = msg.payload.name;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1160,
+        "y": 520,
+        "wires": [
+            [
+                "f6eea5da13d951e8",
+                "f594221ec5187560"
+            ]
+        ]
+    },
+    {
+        "id": "1952e52e48651ce9",
+        "type": "function",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "func": "msg.payload.timeStamp = new Date();\nmsg.payload.reader = msg.topic;\ndelete msg.payload._id;\n\nreturn msg.payload;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1160,
+        "y": 580,
+        "wires": [
+            [
+                "27be98817d83aa34",
+                "20125f31d8c5a311"
+            ]
+        ]
+    },
+    {
+        "id": "f594221ec5187560",
+        "type": "ui_audio",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "group": "",
+        "voice": "urn:moz-tts:speechd:English%20(Lancaster)?en",
+        "always": "",
+        "x": 1380,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "ed11a052c6c89d16",
+        "type": "mqtt out",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "topic": "rfreader",
+        "qos": "2",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "45d875f5f3eeb95a",
+        "x": 1380,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "e3175c8e6590ea43",
+        "type": "function",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "func": "msg.payload = {\"name\": msg.payload.name, \"access\":msg.payload.access};\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1160,
+        "y": 420,
+        "wires": [
+            [
+                "ed11a052c6c89d16"
+            ]
+        ]
+    },
+    {
+        "id": "53415da0aa51e16b",
+        "type": "mongodb in",
+        "z": "832ff2e1581d2204",
+        "mongodb": "6a8a9e8cbd23bc2c",
+        "name": "",
+        "collection": "cards",
+        "operation": "find",
+        "x": 670,
+        "y": 720,
+        "wires": [
+            [
+                "0f20fc7fee9dc69b"
+            ]
+        ]
+    },
+    {
+        "id": "0b81c87a94ebd188",
+        "type": "function",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "func": "if(msg.payload.access === true){\n   msg.payload.access = false;\n}\nelse{\n    msg.payload.access = true;\n}\n\n\ndelete msg.payload.id\n\nmsg[\"query\"] = {_id: msg.payload._id}\n\ndelete msg.payload._id\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1040,
+        "y": 720,
+        "wires": [
+            [
+                "da0cafbd7e2283df",
+                "b81f75189c47b5b9"
+            ]
+        ]
+    },
+    {
+        "id": "da0cafbd7e2283df",
+        "type": "mongodb out",
+        "z": "832ff2e1581d2204",
+        "mongodb": "6a8a9e8cbd23bc2c",
+        "name": "",
+        "collection": "cards",
+        "payonly": true,
+        "upsert": false,
+        "multi": false,
+        "operation": "update",
+        "x": 1250,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "b81f75189c47b5b9",
+        "type": "delay",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1200,
+        "y": 780,
+        "wires": [
+            [
+                "ba62db7964aa96e0"
+            ]
+        ]
+    },
+    {
+        "id": "20125f31d8c5a311",
+        "type": "delay",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "pauseType": "delay",
+        "timeout": "1",
+        "timeoutUnits": "seconds",
+        "rate": "1",
+        "nbRateUnits": "1",
+        "rateUnits": "second",
+        "randomFirst": "1",
+        "randomLast": "5",
+        "randomUnits": "seconds",
+        "drop": false,
+        "allowrate": false,
+        "outputs": 1,
+        "x": 1380,
+        "y": 640,
+        "wires": [
+            [
+                "2ad253f62b2dd602"
+            ]
+        ]
+    },
+    {
+        "id": "ba62db7964aa96e0",
+        "type": "function",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "func": "msg.payload = {}\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1360,
+        "y": 780,
+        "wires": [
+            [
+                "53415da0aa51e16b"
+            ]
+        ]
+    },
+    {
+        "id": "5efb663239a669cb",
+        "type": "ui_table",
+        "z": "832ff2e1581d2204",
+        "group": "51843306cc1e14dd",
+        "name": "Records",
+        "order": 1,
+        "width": 6,
+        "height": 6,
+        "columns": [
+            {
+                "field": "name",
+                "title": "name",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "rfid",
+                "title": "rfid",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "timeStamp",
+                "title": "Time Stamp",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            }
+        ],
+        "outputs": 0,
+        "cts": false,
+        "x": 940,
+        "y": 640,
+        "wires": []
+    },
+    {
+        "id": "0f20fc7fee9dc69b",
+        "type": "ui_table",
+        "z": "832ff2e1581d2204",
+        "group": "49f5dbd5117f191c",
+        "name": "Cards",
+        "order": 1,
+        "width": 6,
+        "height": 6,
+        "columns": [
+            {
+                "field": "_id",
+                "title": "_id",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "rfid",
+                "title": "rfid",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "name",
+                "title": "name",
+                "width": "",
+                "align": "left",
+                "formatter": "plaintext",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            },
+            {
+                "field": "access",
+                "title": "access",
+                "width": "",
+                "align": "left",
+                "formatter": "tickCross",
+                "formatterParams": {
+                    "target": "_blank"
+                }
+            }
+        ],
+        "outputs": 1,
+        "cts": true,
+        "x": 890,
+        "y": 720,
+        "wires": [
+            [
+                "0b81c87a94ebd188"
+            ]
+        ]
+    },
+    {
+        "id": "b375e673b9dd9e89",
+        "type": "debug",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 950,
+        "y": 440,
+        "wires": []
+    },
+    {
+        "id": "20bc738e7f30c841",
+        "type": "function",
+        "z": "832ff2e1581d2204",
+        "name": "",
+        "func": "\nif(msg.payload.length == 0){\n    msg.payload = {\"name\":\"unknown\",\"rfid\":\"\",\"access\":false};\n}else{\n    msg.payload = msg.payload[0];\n}\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 980,
+        "y": 520,
+        "wires": [
+            [
+                "b375e673b9dd9e89",
+                "6ff66543db35def0",
+                "e3175c8e6590ea43",
+                "1952e52e48651ce9"
+            ]
+        ]
+    },
+    {
+        "id": "a43fd474fc96aded",
+        "type": "ui_spacer",
+        "z": "832ff2e1581d2204",
+        "name": "spacer",
+        "group": "27c171b56d6eb77f",
+        "order": 1,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "2aab1e74896d15d4",
+        "type": "ui_spacer",
+        "z": "832ff2e1581d2204",
+        "name": "spacer",
+        "group": "27c171b56d6eb77f",
+        "order": 1,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "4f8d1f58ed17ae80",
+        "type": "ui_spacer",
+        "z": "832ff2e1581d2204",
+        "name": "spacer",
+        "group": "4b051cbff25a299f",
+        "order": 3,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "9bc882aa3d79610d",
+        "type": "ui_spacer",
+        "z": "832ff2e1581d2204",
+        "name": "spacer",
+        "group": "efe5e7ab8d2410b9",
+        "order": 3,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "3e3fa7cf219f4311",
+        "type": "ui_spacer",
+        "z": "832ff2e1581d2204",
+        "name": "spacer",
+        "group": "422d0dc85db59032",
+        "order": 3,
+        "width": 1,
+        "height": 1
+    },
+    {
+        "id": "6a8a9e8cbd23bc2c",
+        "type": "mongodb",
+        "hostname": "127.0.0.1",
+        "topology": "direct",
+        "connectOptions": "",
+        "port": "27017",
+        "db": "rfid_db",
+        "name": ""
+    },
+    {
+        "id": "45d875f5f3eeb95a",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "localhost",
+        "port": "2000",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willPayload": "",
+        "willMsg": {},
+        "sessionExpiry": ""
+    },
+    {
+        "id": "51843306cc1e14dd",
+        "type": "ui_group",
+        "name": "Records",
+        "tab": "8a2023123841056a",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": true,
+        "className": ""
+    },
+    {
+        "id": "49f5dbd5117f191c",
+        "type": "ui_group",
+        "name": "Cards",
+        "tab": "8a2023123841056a",
+        "order": 2,
+        "disp": true,
+        "width": 6,
+        "collapse": true,
+        "className": ""
+    },
+    {
+        "id": "27c171b56d6eb77f",
+        "type": "ui_group",
+        "name": "Group 1",
+        "tab": "",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "8a2023123841056a",
+        "type": "ui_tab",
+        "name": "RFID Lock",
+        "icon": "dashboard",
+        "order": 2,
+        "disabled": false,
+        "hidden": false
+    }
+]
